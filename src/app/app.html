@@ -1,0 +1,20 @@
+<ion-menu [content]="nav1" >
+    <ion-header>
+        <ion-toolbar color="primary" padding style="text-align: center;">
+            <span style="font-size: 5em;"><ion-icon name="cutlery"></ion-icon></span>
+            <ion-title><small>Wendy Kitchen </small></ion-title>
+        </ion-toolbar>
+    </ion-header>
+    <ion-content>
+        <ion-item no-lines><ion-icon name="home" padding end></ion-icon> Home</ion-item>
+        <!--<ion-item (click)="pushPage('AboutPage')"><ion-icon name="persons" padding end></ion-icon> About Us</ion-item>
+        -->
+        <ion-item no-lines (click)="pushPageWithParameters('AboutPage', {langcode: 1})"><ion-icon name="people" padding></ion-icon> About Us</ion-item>
+        <ion-item no-lines ><ion-icon name="refresh" padding ></ion-icon> Refresh</ion-item>
+        <ion-item no-lines><ion-icon name="settings" padding></ion-icon> Update Tools</ion-item>
+
+
+        <div></div>
+    </ion-content>
+</ion-menu>
+<ion-nav [root]="rootPage" id="naw1" #nav1></ion-nav>

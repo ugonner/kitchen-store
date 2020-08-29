@@ -1,0 +1,114 @@
+<!--
+  Generated template for the CartPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+  <ion-navbar color="dark">
+    <ion-title>cart</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+    <div class="container" >
+        <div class="row" *ngIf="PageTab == 'cart'">
+            <div class="col-sm-12">
+                <ion-item no-lines>
+                    <span item-end padding class="btn btn-danger rounded-pill animated bounce infinite" (click)="emptyCart()" title="Empty Your Tray" ><ion-icon name="trash"></ion-icon></span>
+                </ion-item>
+            </div>
+            <div class="col-sm-12">
+                <div class="table-responsive-sm">
+                    <table class="table table-striped table-hover table-dark">
+                        <thead>
+                            <tr>
+                                <th>Sn</th>
+                                <th>Product Description</th>
+                                <th>Quantity</th>
+                                <th title="this is subject to changes">Price )NGN)</th>
+                                <th>Cost</th>
+                            </tr>
+                        </thead>
+                        <tbody  *ngFor="let cp of Cart.products; let i = index">
+                            <tr *ngIf="i > 0">
+                                <td>{{i}}</td>
+                                <td>
+                                    <ion-item no-lines style="background: transparent; color: #ffffff !important;">
+                                        <ion-avatar class="float-left ">
+                                            <img onmouseover="event.target.setAttribute('class','animated flip')" src="{{httpservice.hostdomain + cp.imageurl}}" alt="image of {{cp.title}}" />
+                                        </ion-avatar>
+                                        <span padding>{{cp.title | uppercase}}</span>
+                                    </ion-item>
+                                </td>
+                                <td>
+                                    <span class="btn bg-light rounded-pill" (click)="incrementCart(cp,'-')">
+                                        <span>-</span>
+                                    </span>
+                                    {{cp.quantity}}
+                                    <span class="btn rgba-blue-grey-light rounded-pill" (click)="incrementCart(cp,'+')">
+                                        <ion-icon name="add"></ion-icon>
+                                    </span>
+                                </td>
+                                <td>
+                                    <span padding>{{cp.price}}</span>
+                                </td>
+                                <td>
+                                    <span padding>{{cp.price * cp.quantity}}</span> &nbsp;
+                                    <span class="btn btn-danger rounded-pill" (click)="removeFromCart(cp)">
+                                        <ion-icon name="trash"></ion-icon><sup><b>-</b></sup>
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                        <tr class="">
+                            <td></td>
+                            <td>TOTAL</td>
+                            <td></td>
+                            <td></td>
+                            <td><span class="btn active rounded-pill" (click)="updateCartTotalCost()"  title="click to see total cost of your demands">show total</span> NGN {{CartTotalCost}}</td>
+                        </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div class="">
+                    <ion-item no-lines>
+                        <ion-buttons item-end>
+                            <button ion-button (click)="PageTab = 'checkout_details'" class="btn btn-primary rounded-pill btn-lg animated zoomIn infinite"  >Continue</button>
+                        </ion-buttons>
+                    </ion-item>
+
+                </div>
+            </div>
+        </div>
+        <div class="row" *ngIf="PageTab == 'checkout_details'">
+            <div class="col-sm-12">
+                <ion-item no-lines>
+                    <ion-label>Name {{UserData.mobile}}</ion-label>
+                    <ion-input type="text" [(ngModel)]="UserData.usersname"></ion-input>
+                </ion-item>
+                <ion-item no-lines>
+                    <ion-label>Email {{UserData.email}}</ion-label>
+                    <ion-input type="email" [(ngModel)]="UserData.email"></ion-input>
+                </ion-item>
+                <ion-item no-lines>
+                    <ion-label>Mobile: {{UserData.mobile}}</ion-label>
+                    <ion-input type="tel" [(ngModel)]="UserData.mobile"></ion-input>
+                </ion-item>
+                <ion-item no-lines>
+                    <ion-label>Delivery Address {{OrderDetails.orderDeliveryAddress}}</ion-label>
+                    <ion-input type="text" [(ngModel)]="OrderDetails.orderDeliveryAddress"></ion-input>
+                </ion-item>
+            </div>
+            <div class="">
+                <ion-item no-lines>
+                    <ion-buttons item-end>
+                        <button ion-button (click)="PageTab = 'cart'" class="btn btn-primary rounded-pill btn-lg animated zoomIn infinite"  >Back To Cart</button>
+                    </ion-buttons>
+                </ion-item>
+
+            </div>
+        </div>
+    </div>
+</ion-content>

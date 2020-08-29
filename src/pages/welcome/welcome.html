@@ -1,0 +1,181 @@
+<!--
+  Generated template for the WelcomePage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header xmlns="http://www.w3.org/1999/html">
+  <ion-toolbar color="primary">
+      <button ion-button icon-only menuToggle start>
+          <ion-icon name="menu"></ion-icon>
+      </button>
+    <ion-title>The Wendy Kitchen</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <div class="container-fluid" hideWhen="android,ios">
+        <div class="carousel carousel-fade" data-ride="carousel">
+            <div class="carousel-inner" style="height: 650px;">
+                <div class="carousel-item active">
+                        <div class="row">
+                            <div class="col-sm-6 carousel-headings-div">
+                                <h2 padding>Header This is a text</h2>
+                                <h4> This is a text</h4>
+                            </div>
+                            <div class="col-sm-6"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6"></div>
+                            <div class="col-sm-6 carousel-headings-div">
+                                <h2 padding>Header This is a text</h2>
+                                <h4> This is a text</h4>
+                            </div>
+                        </div>
+
+                    <!--<img src="assets/imgs/banner-rice-and-veg.jpg" class=" w-100" />-->
+
+                </div>
+                <div class="carousel-item">
+                    <!--<img src="assets/imgs/banner-restautrant-african-men.jpg" class="d-block w-100" />-->
+                        <div class="row">
+                            <div class="col-sm-6"></div>
+                            <div class="col-sm-6 text-right carousel-headings-div">
+                                <h2  padding> Two Header This is a text</h2>
+                                <h4> This is a text</h4>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6 text-right carousel-headings-div">
+                                <h2  padding> Two Header This is a text</h2>
+                                <h4> This is a text</h4>
+                            </div>
+                            <div class="col-sm-6"></div>
+                        </div>
+
+                </div>
+                <div class="carousel-item">
+                    <!--<img src="../../assets/imgs/banner-rstaurant-african-women.jpg" class="d-block w-100" />-->
+                        <div class="row">
+                            <div class="col-sm-6 carousel-headings-div">
+                                <h2 padding class="text-right">Third Header This is a text</h2>
+                                <h4>This is a text</h4>
+                            </div>
+                            <div class="col-sm-6"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6"></div>
+                            <div class="col-sm-6 carousel-headings-div">
+                                <h2 padding class="text-right">Third Header This is a text</h2>
+                                <h4>This is a text</h4>
+                            </div>
+                        </div>
+
+                </div>
+
+                <div class="carousel-item">
+                    <!--<img src="../../assets/imgs/banner-image-1.jpg" class="d-block w-100" />-->
+                    <div class="row">
+                        <div class="col-sm-6"></div>
+                        <div class="col-sm-6 text-right carousel-headings-div">
+                            <h2 style="" padding> Four Header This is a text</h2>
+                            <h4> This is a text</h4>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 text-right carousel-headings-div">
+                            <h2 style="" padding> Four Header This is a text</h2>
+                            <h4> This is a text</h4>
+                        </div>
+                        <div class="col-sm-6"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <ion-grid showWhen="ios,android">
+        <ion-row>
+            <ion-col col-12>
+                <ion-slides autoplay="1000" effect="flip" loop="true" class="w-100">
+                    <ion-slide>
+                        <img src="assets/imgs/banner-cupcakes.jpg" alt="" class="img-fluid"/>
+                    </ion-slide>
+                    <ion-slide>
+                        <img src="assets/imgs/banner-menu.jpg" alt="" class="img-fluid"/>
+                    </ion-slide>
+                    <ion-slide>
+                        <img src="assets/imgs/banner-food-delivery.jpg" alt="" class="img-fluid"/>
+                    </ion-slide>
+                    <ion-slide>
+                        <img src="assets/imgs/banner-rice-and-veg.jpg" alt="" class="img-fluid"/>
+                    </ion-slide>
+                </ion-slides>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+
+    <div class="container">
+        <div class="row text-capitalize">
+            <div class="col-sm-6" *ngFor="let p of Products; let i = index">
+                <div class="bg-transparent">
+                    <span class="btn bg-transparent">p.categoryname</span>
+                </div>
+                <ion-item no-lines>
+
+                        <img src="{{httpservice.hostdomain +p.imageurl}}" alt="{{p.title}}" class="product-images"/>
+
+                </ion-item>
+                <ion-item no-lines>
+                    <ion-item no-lines item-start>
+                        <h3 item-start class="strong"><ion-icon name="folder" item-start></ion-icon> {{p.title | uppercase}}</h3>
+                        <span item-end> N{{p.price}}</span>
+
+                        <!--<span #addtocart{{i}} id="{{'addtocart'+i}}" (click)="addToCart(p)"  class="btn btn-lg bg-danger" style="border-radius: 50%; box-shadow: 10px;" padding item-end><ion-icon name="cart">+</ion-icon></span>-->
+                        <span #addincart{{i}} id="{{'addincart'+i}}" (click)="incrementCart(p,'-')" onMouseOver="let tween = gsap.fromTo('#'+event.target.getAttribute('id'), {scale: 1, rotation: 0},{scale: 0.7, rotation: 360, duration: 2, ease: 'elastic'}); tween.repeat(2); tween.delay(0.5); tween.play();" class="btn btn-lg btn-light" style="border-radius: 50%; box-shadow: 10px;" padding item-end title="remove or decrease item quantity in cart"><ion-icon name="cart">-</ion-icon></span>
+                        <span #removeincart{{i}} id="{{'removeincart'+i}}" (click)="incrementCart(p,'+')" onMouseOver="let tween = gsap.fromTo('#'+event.target.getAttribute('id'), {scale: 1, rotation: 0},{scale: 0.7, rotation: 360, duration: 2, ease: 'elastic'}); tween.repeat(2); tween.delay(0.5); tween.play();" class="btn btn-lg btn-primary" style="border-radius: 50%; box-shadow: 10px;" padding item-end title="add or increase item quantity in cart"><ion-icon name="cart">+</ion-icon></span>
+
+
+                    </ion-item>
+
+                </ion-item>
+                <ion-item no-lines>
+                    <small>
+                        <span padding><ion-icon name="person"></ion-icon> {{p.usersname}}</span>
+                        <span item-end><ion-icon name="book"></ion-icon><b>Category | </b> {{p.categoryname}} <b> | </b> {{p.productcategoryname}}</span>
+                    </small>
+                </ion-item>
+            </div>
+        </div>
+    </div>
+    <div>
+        <button class="animated bounce infinite delay-3s rounded-pill btn btn-danger">
+            me <span class="material-icons">more_vert</span>
+        </button>
+        <button id="addtocartelement" #addtocartelement class="btn btn-info" onClick="let tween = gsap.fromTo('#addtocartelement',{scale: 1, rotation: 0},{scale: 1.7, rotation: 360, duration: 2, ease: 'elastic'}); tween.repeat(2); tween.delay(0.5); tween.play();">get Products</button>
+        <button class="rounded-circle animated tada infinite slow btn  btn-primary small"><small>12</small></button>
+    </div>
+
+    <!------ Include the above in your HEAD tag ---------->
+
+
+    <div class="container">
+        <div class="row">
+            <div class="container">
+                <div class="row">
+                    <a href="#" class="intro-banner-vdo-play-btn pinkBg" onclick="event.preventDefault(); " (click)="pushPage('CartPage')">
+                        <i class="fa fa-cart-plus whiteText" aria-hidden="true" style="color: #ffffff;"><sup>{{Cart.no_of_items}}</sup></i>
+                        <span class="ripple pinkBg"></span>
+                        <span class="ripple pinkBg"></span>
+                        <span class="ripple pinkBg"></span>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</ion-content>
