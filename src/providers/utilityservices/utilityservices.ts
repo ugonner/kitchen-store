@@ -15,22 +15,6 @@ export class UtilityservicesProvider {
   constructor(public platform: Platform, public http: HttpClient, public toastCtrl: ToastController, public navCtrl: MenuController,
                private menuCtrl: MenuController, private storage: Storage, private loadingCtrl: LoadingController,
                public nativeAudio: NativeAudio) {
-      this.platform.ready().then((ready)=>{
-          this.nativeAudio.preloadSimple("id1","assets/audio/Bite.mp3").then((loaded)=>{
-              console.log("got preloaded");
-          },(err)=>{
-              this.presentToast(err,2);
-          });
-
-          //preload second sound;
-          this.nativeAudio.preloadSimple("id2","assets/audio/Splat.mp3").then((loaded)=>{
-              console.log("loaded second sound");
-          },(err)=>{
-              this.presentToast("Second Sound Not Loaded "+err,1);
-          });
-      },(err)=>{
-          console.log("error in platform");
-      });
     console.log('Hello UtilityservicesProvider Provider');
   }
 
@@ -157,6 +141,14 @@ export class UtilityservicesProvider {
             //return JSON.parse(paragraphobject.paragraphigbotext);
             return paragraphobject.paragraphigbotext;
         }
+    }
+
+    removeFromStorage(key){
+        this.storage.remove(key).then((cleared)=>{
+            this.presentToast('cleared successfully',2);
+        }).catch((err)=>{
+            this.presentToast('not cleared',2);
+        })
     }
 
     /*echoTextInTranslation(paragraphobject: any){

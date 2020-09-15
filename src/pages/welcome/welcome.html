@@ -10,16 +10,17 @@
           <ion-icon name="menu"></ion-icon>
       </button>
     <ion-title>The Wendy Kitchen</ion-title>
+
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
     <div class="container-fluid" hideWhen="android,ios">
-        <div class="carousel carousel-fade" data-ride="carousel">
+        <div id="myCarousel" class="carousel carousel-fade" data-ride="carousel">
             <div class="carousel-inner" style="height: 650px;">
                 <div class="carousel-item active">
                         <div class="row">
-                            <div class="col-sm-6 carousel-headings-div">
+                            <div class="col-sm-6 carousel-headings-div animated fadeIn slower">
                                 <h2 padding>Header This is a text</h2>
                                 <h4> This is a text</h4>
                             </div>
@@ -27,7 +28,7 @@
                         </div>
                         <div class="row">
                             <div class="col-sm-6"></div>
-                            <div class="col-sm-6 carousel-headings-div">
+                            <div class="col-sm-6 carousel-headings-div animated fadeIn slower">
                                 <h2 padding>Header This is a text</h2>
                                 <h4> This is a text</h4>
                             </div>
@@ -40,14 +41,14 @@
                     <!--<img src="assets/imgs/banner-restautrant-african-men.jpg" class="d-block w-100" />-->
                         <div class="row">
                             <div class="col-sm-6"></div>
-                            <div class="col-sm-6 text-right carousel-headings-div">
+                            <div class="col-sm-6 text-right carousel-headings-div animated fadeIn slow">
                                 <h2  padding> Two Header This is a text</h2>
                                 <h4> This is a text</h4>
                             </div>
 
                         </div>
                         <div class="row">
-                            <div class="col-sm-6 text-right carousel-headings-div">
+                            <div class="col-sm-6 text-right carousel-headings-div  animated fadeIn slower">
                                 <h2  padding> Two Header This is a text</h2>
                                 <h4> This is a text</h4>
                             </div>
@@ -58,7 +59,7 @@
                 <div class="carousel-item">
                     <!--<img src="../../assets/imgs/banner-rstaurant-african-women.jpg" class="d-block w-100" />-->
                         <div class="row">
-                            <div class="col-sm-6 carousel-headings-div">
+                            <div class="col-sm-6 carousel-headings-div  animated fadeIn slow">
                                 <h2 padding class="text-right">Third Header This is a text</h2>
                                 <h4>This is a text</h4>
                             </div>
@@ -66,7 +67,7 @@
                         </div>
                         <div class="row">
                             <div class="col-sm-6"></div>
-                            <div class="col-sm-6 carousel-headings-div">
+                            <div class="col-sm-6 carousel-headings-div  animated fadeIn slow">
                                 <h2 padding class="text-right">Third Header This is a text</h2>
                                 <h4>This is a text</h4>
                             </div>
@@ -78,13 +79,13 @@
                     <!--<img src="../../assets/imgs/banner-image-1.jpg" class="d-block w-100" />-->
                     <div class="row">
                         <div class="col-sm-6"></div>
-                        <div class="col-sm-6 text-right carousel-headings-div">
+                        <div class="col-sm-6 text-right carousel-headings-div animated fadeIn slow">
                             <h2 style="" padding> Four Header This is a text</h2>
                             <h4> This is a text</h4>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-sm-6 text-right carousel-headings-div">
+                        <div class="col-sm-6 text-right carousel-headings-div animated fadeIn slow">
                             <h2 style="" padding> Four Header This is a text</h2>
                             <h4> This is a text</h4>
                         </div>
@@ -119,15 +120,106 @@
         </ion-row>
     </ion-grid>
 
+    <ion-card  *ngIf="showLogin" padding>
+        <ion-card-header>
+            <ion-card-title>Login</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+
+            <div>{{errorMessageBag}}</div>
+            <div class="col-sm-4">
+
+                <div class="img" *ngIf="showLoginTab =='login'">
+                    <img src="../../assets/images/banner.jpg" class="img-fluid">
+                </div>
+            <div class="form-group" *ngIf="showLoginTab =='register'">
+                <div>
+
+                    <ion-item no-lines padding>
+                        <ion-label stacked>Name {{UserData.usersname}}</ion-label>
+                        <ion-input required type="text" [(ngModel)]="UserData.usersname" [disabled]="showPasswordField"></ion-input>
+                    </ion-item>
+                    <ion-item padding no-lines bottomMargin>
+                    <ion-label stacked>Password {{UserData.password}}</ion-label>
+                    <ion-input required type="password" [(ngModel)]="UserData.password"></ion-input>
+                    </ion-item>
+
+                    <ion-item padding no-lines bottomMargin>
+                        <ion-label stacked>Email {{UserData.email}} {{UserData.password}}</ion-label>
+                        <ion-input required type="email" [(ngModel)]="UserData.email"  [disabled]="showPasswordField"></ion-input>
+                    </ion-item>
+
+                    <ion-item padding no-lines>
+                        <ion-label stacked>Mobile: {{UserData.mobile}}</ion-label>
+                        <ion-input required type="tel" [(ngModel)]="UserData.mobile"  [disabled]="showPasswordField"></ion-input>
+                    </ion-item>
+
+                    <ion-item no-lines padding>
+                        Already Have Account <span class="material-icons">question</span>
+                    </ion-item>
+
+                    <ion-item padding no-lines>
+                        <ion-buttons>
+                            <button (click)="join('Registration')" ion-button block>
+                                sign up
+                            </button>
+                            <button type="button" ion-button block color="danger" onclick="event.preventDefault();" (click)="showLoginTab = 'login';">
+                                 Login
+                            </button>
+                        </ion-buttons>
+                    </ion-item>
+                </div>
+            </div>
+            </div>
+
+            <div class="col-sm-4">
+                <div class="img" *ngIf="showLoginTab == 'register'">
+                    <img src="../../assets/images/banner-bottom.jpg" class="img-fluid">
+                </div>
+                <div class="form-group"  *ngIf="showLoginTab == 'login'">
+                    <div>
+                        <ion-item padding no-lines bottomMargin>
+                            <ion-label stacked>Email {{UserData.email}} {{UserData.password}}</ion-label>
+                            <ion-input required type="email" [(ngModel)]="UserData.email"  [disabled]="showPasswordField"></ion-input>
+                        </ion-item>
+                        <ion-item padding no-lines bottomMargin>
+                            <ion-label stacked>Password {{UserData.password}}</ion-label>
+                            <ion-input required type="password" [(ngModel)]="UserData.password"></ion-input>
+                        </ion-item>
+
+                        <ion-item no-lines padding>
+                            Don't Already Have Account <span class="material-icons">question</span> Register In A Sec
+                        </ion-item>
+
+                        <ion-item padding no-lines>
+                            <ion-buttons>
+                                <button (click)="join('Login')" ion-button block>
+                                    Log In
+                                </button>
+                                <button type="button" ion-button block color="danger" onclick="event.preventDefault();" (click)="showLoginTab = 'register';">
+                                Register
+                                </button>
+                            </ion-buttons>
+                        </ion-item>
+                    </div>
+            </div>
+            </div>
+        </ion-card-content>
+    </ion-card>
+
+
+
+
     <div class="container">
         <div class="row text-capitalize">
+
             <div class="col-sm-6" *ngFor="let p of Products; let i = index">
                 <div class="bg-transparent">
-                    <span class="btn bg-transparent">p.categoryname</span>
+                    <span class="btn bg-transparent">{{p.categoryname}}</span>
                 </div>
                 <ion-item no-lines>
 
-                        <img src="{{httpservice.hostdomain +p.imageurl}}" alt="{{p.title}}" class="product-images"/>
+                        <img onmouseover="event.target.setAttribute('class','animated flip product-images');" src="{{httpservice.hostdomain +p.imageurl}}" alt="{{p.title}}" class="product-images" />
 
                 </ion-item>
                 <ion-item no-lines>
@@ -150,15 +242,18 @@
                     </small>
                 </ion-item>
             </div>
+
         </div>
     </div>
-    <div>
+    <!--<div class="container">
+        <div class="row">
+        </div>
         <button class="animated bounce infinite delay-3s rounded-pill btn btn-danger">
             me <span class="material-icons">more_vert</span>
         </button>
         <button id="addtocartelement" #addtocartelement class="btn btn-info" onClick="let tween = gsap.fromTo('#addtocartelement',{scale: 1, rotation: 0},{scale: 1.7, rotation: 360, duration: 2, ease: 'elastic'}); tween.repeat(2); tween.delay(0.5); tween.play();">get Products</button>
         <button class="rounded-circle animated tada infinite slow btn  btn-primary small"><small>12</small></button>
-    </div>
+    </div>-->
 
     <!------ Include the above in your HEAD tag ---------->
 
@@ -167,7 +262,7 @@
         <div class="row">
             <div class="container">
                 <div class="row">
-                    <a href="#" class="intro-banner-vdo-play-btn pinkBg" onclick="event.preventDefault(); " (click)="pushPage('CartPage')">
+                    <a href="#" class="intro-banner-vdo-play-btn pinkBg animated bounce infinite" onclick="event.preventDefault(); " (click)="pushPage('CartPage')">
                         <i class="fa fa-cart-plus whiteText" aria-hidden="true" style="color: #ffffff;"><sup>{{Cart.no_of_items}}</sup></i>
                         <span class="ripple pinkBg"></span>
                         <span class="ripple pinkBg"></span>

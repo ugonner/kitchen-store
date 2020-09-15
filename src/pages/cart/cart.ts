@@ -27,6 +27,22 @@ export class CartPage {
     }
 
 
+
+    paymentInit() {
+        console.log('Payment initialized');
+    }
+
+    title: string;
+    reference :string = (Math.random() * 10000000000).toString();
+    paymentDone(ref: any) {
+        this.title = 'Payment successfull';
+        console.log(this.title, ref);
+    }
+
+    paymentCancel() {
+        console.log('payment failed');
+    }
+
     ionViewDidEnter() {
         this.storage.get('last_cart').then((cart)=>{
             if(cart){
@@ -36,10 +52,25 @@ export class CartPage {
             this.utilityservice.presentToast(err.message,2);
         });
 
+        //get menu items
+        this.storage.get('wendy_menuitems').then((menuitems)=>{
+            if(menuitems){
+                this.MenuItems = menuitems;
+                //alert(JSON.stringify(this.MenuItems))
+            }else{
+                //alert('no menu');
+            }
+        }).catch((err)=>{
+
+            this.utilityservice.presentToast(err.message,2);
+        });
+
         //get user data for billing
         this.storage.get('wendy_userdata').then((userdata)=>{
             if(userdata){
                 this.UserData = userdata;
+            }else{
+                this.showPasswordField = true;
             }
         }).catch((err)=>{
             this.utilityservice.presentToast(err.message,2);
@@ -48,22 +79,34 @@ export class CartPage {
         console.log('ionViewDidLoad CartPage');
     }
 
+    showPasswordField: boolean = false;
 
+    MenuItems: any={
+        "carttypes":[{'id':1,"name": 'Door Delivery YES'}, {"id":2,"name": 'real'}],
+        "cartcategories": [{'id':1,"name": 'Instant Delivery YES'}, {"id":2,"name": 'real'}],
+        "productcategories": []
+    }
 
     UserData: any = {
         "usersid": '',
         "usersname": '',
+        "password": '',
         "email": '',
         "mobile": '',
         "address": ''
 
     };
 
+    Orders: any = {};
     OrderDetails: any = {
-        "orderDeliveryDate": '00-00-2020',
-        "orderDeliveryTime": '00:00',
-        "orderDeliveryAddress": this.UserData.address,
-        "orderNote": ''
+        "orderdate": '00-00-2020',
+        "ordertime": '00:00',
+        "orderaddress": '',
+        "orderamount": '0.00',
+        "ordernote": '',
+        "cartcategoryid": 1,
+        "carttypeid": 1,
+        "orderref": 1
     };
 
     PageTab = 'cart';
@@ -111,4 +154,93 @@ export class CartPage {
         };
     }
 
+    //paystack secret key = sk_test_3b322217064583493ef390003860fecd7b7ea876
+    //paystack public key = pk_test_cab152282ae4dbe3e8806d278c48e0f5b8d76710
+    private errorMessageBag: string;
+    placeOrder(userid){
+        //gatther product ids
+        let cartproductsids: Array<any> = [];
+        let products: Array<any> = this.Cart.products;
+        for(let i=0; i<products.length; i++){
+            cartproductsids.push(products[i].id);
+        }
+
+        let postdata = {
+            logFromApp: true,
+            email: this.UserData.email,
+            password: this.UserData.password,
+            name: this.UserData.usersname,
+            mobile: this.UserData.mobile,
+            address: this.UserData.address,
+
+            orderaddress: this.UserData.address,
+            orderdate: this.OrderDetails.orderdate,
+            ordertime: this.OrderDetails.ordertime,
+            orderamount: this.CartTotalCost.toString(),
+            ordernote: (this.OrderDetails.ordernote?this.OrderDetails.ordernote: 'just served well'),
+            orderref: (this.OrderDetails.orderref?this.OrderDetails.orderref:1),
+            cartcategoryid: (this.OrderDetails.cartcategoryid),
+            carttypeid: (this.OrderDetails.carttypeid),
+
+            "cartproductsids": cartproductsids
+        };
+
+        this.httpservice.postStuff("/admin/cart/createcart",postdata).subscribe((data)=>{
+            alert(JSON.stringify(data));
+            if(data.success == false){
+                this.utilityservice.presentToast("result 0 "+data.error.message,2);
+            }else{
+                //store order;
+                //first get older orders and add the new to them;
+
+                let ordersArray = [];
+                this.storage.get('wendy_orders').then((orders: Array<any>)=>{
+                    if(orders){
+                        ordersArray = orders;
+                    }
+                    //add serverr's cartid, adn timestamps  to order id;
+
+
+                    ordersArray.push(data.cart);
+                    this.storage.set('wendy_orders',ordersArray).then((stored)=>{
+                        //store user data;
+                        if(data.hasOwnProperty('user')){
+
+                            let user = data.user;
+                            //add properties that may not be available at some endpoints
+                            user.address = this.UserData.address;
+                            user.password = this.UserData.password;
+                            user.usersname = (user.hasOwnProperty('name')? user.name : user.usersname);
+                            user.usersid = (user.hasOwnProperty('id')? user.id : user.usersid);
+                            alert(user.address);
+                            this.storage.set('wendy_userdata',user).then((userstored)=>{
+                                    this.utilityservice.presentToast(data.message +' and saved all details successfully',2);
+                                }).catch((err)=>{
+                                    this.utilityservice.presentToast(err.message+', '+data.message +' but not all saved',2);
+                                });
+                        }
+                        this.utilityservice.presentToast(data.message +' and order updated successfully',2);
+                    }).catch((err)=>{
+                        this.utilityservice.presentToast(err.message+', '+data.message +' but not saved',2);
+                    });
+                }).catch((err)=>{
+                    this.utilityservice.presentToast(data.message +' but not saved to previous orders',2);
+                });
+                //this.utilityservice.presentToast(data.results + 'created '+ data.message, 2);
+            }
+        },(err)=>{
+            //let errMsgArray = err.errors;
+            this.errorMessageBag = (JSON.stringify(err.error.message));
+            this.utilityservice.presentToast(err.message,2);
+        })
+    }
+
+    clearOrders(storageData: string){
+        this.storage.remove(storageData).then((cleared)=>{
+            this.utilityservice.presentToast('orders cleared',2);
+        }).catch((err)=>{
+            this.utilityservice.presentToast(err.message,2);
+        });
+        //this.utilityservice.removeFromStorage('wendy_orders')
+    }
 }

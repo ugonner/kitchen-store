@@ -4,7 +4,7 @@
   See http://ionicframework.com/docs/components/#navigation for more info on
   Ionic pages and navigation.
 -->
-<ion-header>
+<ion-header xmlns="http://www.w3.org/1999/html">
   <ion-navbar color="dark">
     <ion-title>cart</ion-title>
   </ion-navbar>
@@ -12,15 +12,18 @@
 
 <ion-content padding>
     <div class="container" >
+        <div class="row">
+            <div class="col-sm-8">
+
         <div class="row" *ngIf="PageTab == 'cart'">
             <div class="col-sm-12">
                 <ion-item no-lines>
-                    <span item-end padding class="btn btn-danger rounded-pill animated bounce infinite" (click)="emptyCart()" title="Empty Your Tray" ><ion-icon name="trash"></ion-icon></span>
+                    <span item-end padding class="btn btn-danger rounded-pill animated bounce" (click)="emptyCart()" title="Empty Your Tray" ><ion-icon name="trash"></ion-icon></span>
                 </ion-item>
             </div>
             <div class="col-sm-12">
                 <div class="table-responsive-sm">
-                    <table class="table table-striped table-hover table-dark">
+                    <table class="table table-dark table-striped">
                         <thead>
                             <tr>
                                 <th>Sn</th>
@@ -75,7 +78,7 @@
                 <div class="">
                     <ion-item no-lines>
                         <ion-buttons item-end>
-                            <button ion-button (click)="PageTab = 'checkout_details'" class="btn btn-primary rounded-pill btn-lg animated zoomIn infinite"  >Continue</button>
+                            <button ion-button (click)="updateCartTotalCost(); PageTab = 'checkout_details';" class="btn btn-primary rounded-pill btn-lg animated tada infinite"  >Continue</button>
                         </ion-buttons>
                     </ion-item>
 
@@ -83,32 +86,134 @@
             </div>
         </div>
         <div class="row" *ngIf="PageTab == 'checkout_details'">
+
+            <div>
+                <h2 class="card-header">Set Order Particulars</h2>
+                <h4>{{errorMessageBag}}</h4>
+            </div>
             <div class="col-sm-12">
                 <ion-item no-lines>
-                    <ion-label>Name {{UserData.mobile}}</ion-label>
-                    <ion-input type="text" [(ngModel)]="UserData.usersname"></ion-input>
+                    <ion-label stacked>Name {{UserData.usersname}}</ion-label>
+                    <ion-input required type="text" [(ngModel)]="UserData.usersname" [disabled]="!showPasswordField"></ion-input>
+                </ion-item>
+                <ion-item *ngIf="showPasswordField" no-lines bottomMargin>
+                    <ion-label stacked>Password {{UserData.password}}</ion-label>
+                    <ion-input required type="password" [(ngModel)]="UserData.password"></ion-input>
+                </ion-item>
+                <ion-item no-lines bottomMargin>
+                    <ion-label stacked>Email {{UserData.email}} {{UserData.password}}</ion-label>
+                    <ion-input required type="email" [(ngModel)]="UserData.email"  [disabled]="!showPasswordField"></ion-input>
                 </ion-item>
                 <ion-item no-lines>
-                    <ion-label>Email {{UserData.email}}</ion-label>
-                    <ion-input type="email" [(ngModel)]="UserData.email"></ion-input>
+                    <ion-label stacked>Mobile: {{UserData.mobile}}</ion-label>
+                    <ion-input required type="tel" [(ngModel)]="UserData.mobile"  [disabled]="!showPasswordField"></ion-input>
                 </ion-item>
                 <ion-item no-lines>
-                    <ion-label>Mobile: {{UserData.mobile}}</ion-label>
-                    <ion-input type="tel" [(ngModel)]="UserData.mobile"></ion-input>
+                    <ion-label stacked>Delivery Address {{UserData.address}}</ion-label>
+                    <ion-textarea required [(ngModel)]="UserData.address" [value]="UserData.address">{{UserData.address}}</ion-textarea>
                 </ion-item>
                 <ion-item no-lines>
-                    <ion-label>Delivery Address {{OrderDetails.orderDeliveryAddress}}</ion-label>
-                    <ion-input type="text" [(ngModel)]="OrderDetails.orderDeliveryAddress"></ion-input>
+                    <ion-label stacked>Delivery Time {{OrderDetails.ordertime}}</ion-label>
+                    <ion-input required type="text"  [(ngModel)]="OrderDetails.ordertime"></ion-input>
+                </ion-item>
+                <ion-item no-lines>
+                    <ion-label stacked>Delivery Date {{OrderDetails.orderdate}}</ion-label>
+                    <ion-input required type="text"  [(ngModel)]="OrderDetails.orderdate"></ion-input>
+                </ion-item>
+                <ion-item no-lines>
+                    <ion-label stacked>Any Extra Note About Your Order {{OrderDetails.ordernote}}</ion-label>
+                    <ion-textarea required [(ngModel)]="OrderDetails.ordernote">{{OrderDetails.ordernote}}</ion-textarea>
+                </ion-item>
+                <ion-item no-lines>
+                    <ion-label stacked>What type of Order is this?</ion-label>
+                    <ion-select required [(ngModel)]="OrderDetails.carttypeid">
+                    <ion-option *ngFor="let cct of MenuItems.carttypes; let i= index" value="{{cct.id}}">{{cct.name}}</ion-option>
+                    </ion-select>
+                </ion-item>
+                <ion-item no-lines>
+                    <ion-label stacked>What category of order is this?</ion-label>
+                    <ion-select required [(ngModel)]="OrderDetails.cartcategoryid">
+                    <ion-option *ngFor="let cc of MenuItems.cartcategories; let i= index" value="{{cc.id}}" >{{cc.name}}</ion-option>
+                    </ion-select>
                 </ion-item>
             </div>
             <div class="">
                 <ion-item no-lines>
+                    <ion-buttons item-start>
+                        <button ion-button (click)="PageTab = 'cart'" class="btn btn-primary rounded-pill btn-lg animated infinite"  >Back To Cart</button>
+                    </ion-buttons>
+
                     <ion-buttons item-end>
-                        <button ion-button (click)="PageTab = 'cart'" class="btn btn-primary rounded-pill btn-lg animated zoomIn infinite"  >Back To Cart</button>
+                        <button ion-button (click)="updateCartTotalCost(); placeOrder(UserData.usersid)" class="btn btn-success rounded-pill btn-lg animated tada infinite"  >Place Order</button>
+
                     </ion-buttons>
                 </ion-item>
 
+                <angular4-paystack
+                [key]=('pk_test_cab152282ae4dbe3e8806d278c48e0f5b8d76710'"
+                [email]="'mailexample@mail.com'"
+                [amount]="5000000"
+                [ref]="reference"
+                [channels]="['bank']"
+                [class]="'btn btn-primary'"
+                (close)="paymentCancel()"
+                (callback)="paymentDone($event)"
+                >
+                Pay with Paystack
+                </angular4-paystack>
+
             </div>
         </div>
+      </div>
+
+      <div class="col-sm-4">
+          <div>
+              <h2 class="card-header">Order Particulars</h2>
+          </div>
+          <div>
+
+          </div>
+          <ion-card>
+              <ion-card-header>
+                  Order Details
+              </ion-card-header>
+              <ion-card-content>
+
+
+                  <ion-item no-lines>
+                      <small>Client Name</small>>
+                      <span><b>{{UserData.usersname}}</b></span>
+                  </ion-item>
+                  <ion-item no-lines>
+                      <small>Client Email</small>>
+                      <span><b>{{UserData.email}}</b></span>
+                  </ion-item>
+                  <ion-item no-lines>
+                      <small>Client Mobile</small>>
+                      <span><b>{{UserData.mobile}}</b></span>
+                  </ion-item>
+                  <ion-item no-lines>
+                      <small stacked>Preferred Address</small>>
+                      <span><b>{{UserData.address}}</b></span>
+                  </ion-item>
+                  <ion-item no-lines>
+                      <small stacked>Preferred Time And Date</small>>
+                      <span><b>{{OrderDetails.ordertime + ' on ' +OrderDetails.orderdate}}</b></span>
+                  </ion-item>
+                  <ion-item no-lines>
+                      <small stacked>Note On Order</small>>
+                      <span><b>{{OrderDetails.ordernote}}</b></span>
+                  </ion-item>
+                  <ion-item no-lines>
+                      <ion-buttons>
+                          <button ion-button class="btn btn-block btn-primary btn-lg rounded-pill">
+                              NGN {{CartTotalCost}}
+                          </button>
+                      </ion-buttons>
+                  </ion-item>
+              </ion-card-content>
+          </ion-card>
+      </div>
+    </div>
     </div>
 </ion-content>

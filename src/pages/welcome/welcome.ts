@@ -35,10 +35,23 @@ export class WelcomePage {
                 this.Cart = cart;
             }
         }).catch((err)=>{
-            this.presentToast(err.message,2);
+            this.utilityservice.presentToast(err.message,2);
         });
+
+
+        this.storage.get('wendy_userdata').then((userdata)=>{
+            if(userdata){
+                this.UserData = userdata;
+            }else{
+                this.showLogin = true;
+                //this.join();
+            }
+        }).catch((storageerr)=>{})
+
     }
 
+    showLogin: boolean = false;
+    showLoginTab: string = 'register';
     Products: any = [{'id': 1,"title": ' ',"imageurl": '', "price": '0.00', "quantity": '0', "dateofpublication": '',
         "usersid": '',"usersname": '', "usersimageurl": ' '}];
 
@@ -68,6 +81,60 @@ export class WelcomePage {
         })
     }
 
+    UserData: any = {
+        "id": '',
+        "name": '',
+        "password": '',
+        "email": '',
+        "mobile": '',
+        "address": ''
+
+    };
+
+
+    errorMessageBag: string;
+    join(joinBy: string){
+
+        //if showpassword shows user is not registered or logged in
+        if(this.showLogin){
+            let postdata = {
+                logFromApp: true,
+                email: this.UserData.email,
+                password: this.UserData.password,
+                name: this.UserData.usersname,
+                mobile: this.UserData.mobile,
+                address: this.UserData.address
+
+            }
+            let url = ((joinBy == 'Registration')? '/admin/user/registration' : '/admin/user/login');
+            this.httpservice.postStuff(url,postdata).subscribe((data)=>{
+                if(data.success == false){
+                    this.utilityservice.presentToast("fetched fetched",2);
+                    //make call to paystack pop
+                    window.location.reload(true);
+                }else{
+                    //
+                    this.UserData.id = data.userid;
+                    //store user in storage
+                    this.storage.set('wendy_userdata',this.UserData).then((storeduserdata)=>{
+                        this.showLogin = false;
+                        this.utilityservice.presentToast('Stored user data',2);
+                    }).catch((err)=>{
+                        this.utilityservice.presentToast('Error Storing user data',2);
+                    });
+                    window.location.reload(true);
+
+                }
+
+
+            },(err)=>{
+                //let errMsgArray = err.errors;
+                this.errorMessageBag = (JSON.stringify(err.error.errors));
+                this.utilityservice.presentToast(err.message,2);
+                window.location.reload(true);
+            });
+        }
+    }
 
 
     pushPageWithParameters(PageString , Params: any){

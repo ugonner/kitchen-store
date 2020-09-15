@@ -28,9 +28,9 @@ export class HttpserviceProvider {
 
 
     postStuff(uri: String, postdata): Observable<any>{
-        let headers = new HttpHeaders().set("Content-type", "application/json").set("withCredentials", "true");
+        let requestoptions = {headers:new HttpHeaders().set("Content-type", "application/json").set("withCredentials", "true")};
         let url = this.hostdomain + uri;
-        return this.http.post(url,postdata, {headers: headers});
+        return this.http.post(url,postdata, requestoptions);
     }
 
     getStuff(uri: String): Observable<any>{

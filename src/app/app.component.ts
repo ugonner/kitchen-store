@@ -35,26 +35,95 @@ export class MyApp implements OnInit{
     private Law: Array<any>;
     private LangCode: any;
 
-    ngOnInit() {
+    /*private MenuItemsArray: Array<any> = [
+        {"name": 'productcategories',"items":this.MenuItems.productcategories},
+        {"name": 'cartcategories',"items":this.MenuItems.cartcategories},
+        {"name": 'carttypes',"items":this.MenuItems.carttypes},
 
-        //this.updateLangCode();
+    ];*/
+
+    showItemsOf: string;
+    private MenuItems: any = {
+        'productcategories': [],
+        "allcategories": [],
+        "cartcategories":[],
+        "carttypes": []
+    };
+
+    UserData = {
+        id: '',
+        imageurl: '',
+        name: '',
+        email: '',
+        password: '',
+        mobile: ''
+    };
+
+    UserId: any = false;
+    ngOnInit() {
+        //get userdata
+        this.storage.get('wendy_userdata').then((userdata)=>{
+            if(userdata){
+                this.UserData = userdata;
+                this.UserId = userdata.id
+            }else{
+                alert('please login First');
+            }
+        }).catch((storageerr)=>{})
 
         //check for locally stored law
-        this.storage.get("law")
-            .then((law)=>{
-                if(law){
-                    this.Law = law.sections;
+        this.storage.get("wendy_menuitems")
+            .then((menuitems)=>{
+                if(menuitems){
+                    this.MenuItems = menuitems;
                     //alert(law.sections[0].title);
                 }else{
+                    alert('no menu found');
                     //if no law was fetched
-                    //this.loadLaw();
+                    this.loadMenuItems();
                 }
             }).catch((err)=>{
-                this.utilityservice.presentToast("storage error: unable to fetch the law "+err.message,1);
+                this.utilityservice.presentToast("storage error: unable to store the menu items "+err.message,1);
             });
 
 
+
         console.log('ionViewDidLoad WelcomePage');
+    }
+
+
+    loadMenuItems(){
+        this.httpservice.getStuff('/admin/getmenuitems').subscribe((data)=>{
+            //alert(JSON.stringify(data));
+            if(data.success == true){
+                this.MenuItems = data.menuitems;
+                this.storage.set('wendy_menuitems',this.MenuItems).then((stored)=>{
+                    this.utilityservice.presentToast('Menuitems stored successfully',2);
+                }).catch((storageerr)=>{
+                    this.utilityservice.presentToast('menuitmes not saved',2);
+                })
+                this.utilityservice.presentToast(data.message,2)
+            }
+        },(err)=>{
+            this.utilityservice.presentToast(err.message,2);
+        })
+    }
+
+
+    logOut(){
+        this.clearStorageData('wendy_userdata');
+        this.clearStorageData('wendy_orders');
+        this.clearStorageData('last_cart');
+        this.goHome();
+        this.UserId = false;
+    }
+    clearStorageData(storageData: string){
+        this.storage.remove(storageData).then((cleared)=>{
+            this.utilityservice.presentToast('orders cleared',2);
+        }).catch((err)=>{
+            this.utilityservice.presentToast(err.message,2);
+        });
+        //this.utilityservice.removeFromStorage('wendy_orders')
     }
 
     pushPage(page){

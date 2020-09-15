@@ -13,7 +13,7 @@ import { MyApp } from './app.component';
 import { WelcomePage } from '../pages/welcome/welcome';
 import { HttpserviceProvider } from '../providers/httpservice/httpservice';
 import { UtilityservicesProvider } from '../providers/utilityservices/utilityservices';
-
+//import { Angular4PaystackModule } from 'angular4-paystack';
 @NgModule({
   declarations: [
     MyApp,
@@ -23,7 +23,8 @@ import { UtilityservicesProvider } from '../providers/utilityservices/utilityser
     HttpClientModule,
     BrowserModule,
     IonicModule.forRoot(MyApp),
-    IonicStorageModule.forRoot()
+    IonicStorageModule.forRoot(),
+    //Angular4PaystackModule.forRoot('pk_test_cab152282ae4dbe3e8806d278c48e0f5b8d76710')
   ],
   bootstrap: [IonicApp],
   entryComponents: [
